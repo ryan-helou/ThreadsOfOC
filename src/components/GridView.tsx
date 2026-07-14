@@ -31,19 +31,23 @@ export function GridView() {
   return (
     <section className="space-y-6">
       <div>
-        <h1 className="mb-4 font-display text-3xl font-bold uppercase tracking-tight">
-          Item Grid
-        </h1>
+        <p className="eyebrow mb-1">Spreadsheet · {stats.totalPieces} units</p>
+        <h1 className="mb-5 font-poster text-5xl uppercase sm:text-6xl">Item Grid</h1>
         <StatsDashboard stats={stats} />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search item name or notes…"
-          className="w-full max-w-xs rounded-md border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-ink-soft sm:w-72"
-        />
+        <div className="relative w-full max-w-xs sm:w-72">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted">
+            ⌕
+          </span>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search item name or notes…"
+            className="w-full rounded-md border border-line bg-surface py-2 pl-8 pr-3 text-sm outline-none transition focus:border-ink-soft focus:ring-2 focus:ring-ink/10"
+          />
+        </div>
         <Button
           variant="outline"
           disabled={busy}
@@ -60,7 +64,7 @@ export function GridView() {
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-line bg-surface shadow-sm">
+      <div className="overflow-x-auto rounded-xl border border-line bg-surface shadow-card">
         <table className="w-full min-w-[820px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-line-strong bg-surface-2 text-left">
@@ -137,11 +141,15 @@ function GridRowView({
   const sold = size.status === 'Sold'
 
   return (
-    <tr className={`border-b border-line ${isGroupStart ? 'border-t-2 border-t-line-strong' : ''}`}>
+    <tr
+      className={`border-b border-line transition-colors hover:bg-surface-2 ${
+        isGroupStart ? 'border-t-2 border-t-line-strong' : ''
+      }`}
+    >
       <td className="px-3 py-1.5 align-middle">
         {isGroupStart ? (
           <div className="flex items-center gap-2">
-            <span className="font-display text-base font-semibold leading-tight">
+            <span className="font-display text-base font-semibold uppercase leading-tight">
               {item.name || 'Untitled'}
             </span>
             <button
@@ -180,7 +188,7 @@ function GridRowView({
       </td>
       <td className="px-3 py-1.5">
         <span
-          className={`font-semibold ${sold ? (profit >= 0 ? 'text-avail' : 'text-red-600') : 'text-muted/70'}`}
+          className={`tabular font-semibold ${sold ? (profit >= 0 ? 'text-avail' : 'text-red-600') : 'text-muted/70'}`}
           title={sold ? 'Counted in totals' : 'Not counted until marked Sold'}
         >
           {sold ? signedMoney(profit) : money(profit)}
@@ -251,7 +259,7 @@ function EditNumber({ value, onCommit }: { value: number; onCommit: (v: number) 
         if (e.key === 'Enter') e.currentTarget.blur()
         if (e.key === 'Escape') setDraft(String(value))
       }}
-      className="w-20 rounded border border-transparent bg-transparent px-1.5 py-1 text-right outline-none hover:border-line focus:border-ink-soft focus:bg-surface"
+      className="tabular w-20 rounded border border-transparent bg-transparent px-1.5 py-1 text-right outline-none hover:border-line focus:border-ink-soft focus:bg-surface"
     />
   )
 }

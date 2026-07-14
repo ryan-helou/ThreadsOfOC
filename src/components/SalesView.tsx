@@ -23,17 +23,15 @@ export function SalesView() {
 
   return (
     <section>
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold uppercase tracking-tight">
-            Sales &amp; Delivery
-          </h1>
-          <p className="text-sm text-muted">
-            {state.sales.length} sale{state.sales.length === 1 ? '' : 's'} logged
+          <p className="eyebrow mb-1">
+            Fulfillment · {state.sales.length} logged
           </p>
+          <h1 className="font-poster text-5xl uppercase sm:text-6xl">Sales &amp; Delivery</h1>
         </div>
         <Button onClick={() => setCreating(true)}>+ New Sale</Button>
-      </div>
+      </header>
 
       {state.sales.length === 0 ? (
         <div className="grid place-items-center rounded-xl border border-dashed border-line py-20 text-center">
@@ -87,7 +85,7 @@ function SaleCard({
           ) : null}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate font-display text-lg font-semibold leading-tight">
+          <div className="truncate font-display text-lg font-semibold uppercase leading-tight">
             {label?.item ?? 'Unknown item'}
           </div>
           <div className="text-xs font-semibold uppercase tracking-widest text-muted">

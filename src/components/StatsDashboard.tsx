@@ -4,14 +4,15 @@ import { money } from '../lib/format.ts'
 const CARDS: {
   key: keyof InventoryStats
   label: string
-  tone: string
+  num: string
+  dot?: string
   isMoney?: boolean
 }[] = [
-  { key: 'totalPieces', label: 'Total Pieces', tone: 'text-ink' },
-  { key: 'available', label: 'Available', tone: 'text-avail' },
-  { key: 'pending', label: 'Pending', tone: 'text-pending' },
-  { key: 'sold', label: 'Sold', tone: 'text-muted' },
-  { key: 'profitSold', label: 'Profit (sold)', tone: 'text-ink', isMoney: true },
+  { key: 'totalPieces', label: 'Total Pieces', num: 'text-ink' },
+  { key: 'available', label: 'Available', num: 'text-ink', dot: 'bg-avail' },
+  { key: 'pending', label: 'Pending', num: 'text-ink', dot: 'bg-pending' },
+  { key: 'sold', label: 'Sold', num: 'text-ink', dot: 'bg-muted' },
+  { key: 'profitSold', label: 'Profit · sold', num: 'text-avail', isMoney: true },
 ]
 
 export function StatsDashboard({ stats }: { stats: InventoryStats }) {
@@ -20,12 +21,13 @@ export function StatsDashboard({ stats }: { stats: InventoryStats }) {
       {CARDS.map((card) => (
         <div
           key={card.key}
-          className="rounded-xl border border-line bg-surface px-4 py-3 shadow-sm"
+          className="relative overflow-hidden rounded-xl border border-line bg-surface px-4 py-3.5 shadow-card"
         >
-          <div className="text-xs font-semibold uppercase tracking-widest text-muted">
-            {card.label}
+          <div className="flex items-center gap-1.5">
+            {card.dot && <span className={`h-2 w-2 rounded-full ${card.dot}`} />}
+            <span className="eyebrow">{card.label}</span>
           </div>
-          <div className={`mt-1 font-display text-3xl font-bold ${card.tone}`}>
+          <div className={`font-poster tabular mt-1.5 text-4xl ${card.num}`}>
             {card.isMoney ? money(stats[card.key]) : stats[card.key]}
           </div>
         </div>
