@@ -3,6 +3,7 @@ import type { Item } from '../../shared/types.ts'
 import { sanitizeUrl } from '../../shared/helpers.ts'
 import { useStore } from '../store/store.tsx'
 import { fileToDataUrl } from '../lib/image.ts'
+import { priceRange, sku } from '../lib/labels.ts'
 import { SizeBubble } from './Chip.tsx'
 
 export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) => void }) {
@@ -87,16 +88,9 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
       <div className="flex flex-1 flex-col gap-1.5 p-3.5">
         <div className="flex items-center gap-2">
           <span className="eyebrow text-[0.625rem]">{item.brand || 'Unbranded'}</span>
-          {ref && (
-            <a
-              href={ref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-auto text-[11px] font-bold uppercase tracking-wide text-ink-soft underline decoration-dotted underline-offset-2 transition hover:text-ink"
-            >
-              reference ↗
-            </a>
-          )}
+          <span className="ml-auto font-mono text-[10px] tracking-tight text-muted">
+            {sku(item)}
+          </span>
         </div>
 
         {editingName ? (
@@ -121,9 +115,23 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
           </button>
         )}
 
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="font-mono text-sm font-bold text-ink">{priceRange(item)}</span>
+          {ref && (
+            <a
+              href={ref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-bold uppercase tracking-wide text-ink-soft underline decoration-dotted underline-offset-2 transition hover:text-ink"
+            >
+              reference ↗
+            </a>
+          )}
+        </div>
+
         <div className="mt-auto flex items-center justify-between border-t border-line pt-2.5">
-          <span className="text-xs font-medium text-muted">
-            {item.sizes.length} size{item.sizes.length === 1 ? '' : 's'}
+          <span className="font-mono text-xs text-muted">
+            {item.sizes.length} SZ · {item.sizes.filter((s) => s.status === 'Available').length} AVL
           </span>
           <button
             onClick={() => {

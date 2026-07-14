@@ -89,7 +89,7 @@ function SaleCard({
             {label?.item ?? 'Unknown item'}
           </div>
           <div className="text-xs font-semibold uppercase tracking-widest text-muted">
-            Size {label?.size || '—'} · {sale.fulfillment}
+            <span className="font-mono">{label?.size || '—'}</span> · {sale.fulfillment}
           </div>
         </div>
         <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold uppercase ${paidTone}`}>
@@ -99,8 +99,8 @@ function SaleCard({
 
       <dl className="grid grid-cols-2 gap-x-3 gap-y-2 p-3 text-sm">
         <Row label="Buyer" value={sale.buyerName || '—'} />
-        <Row label="Price" value={money(sale.salePrice)} />
-        <Row label={sale.fulfillment} value={formatDateTime(sale.datetime)} />
+        <Row label="Price" value={money(sale.salePrice)} mono />
+        <Row label={sale.fulfillment} value={formatDateTime(sale.datetime)} mono />
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-muted">Paid?</dt>
           <dd>
@@ -139,11 +139,13 @@ function SaleCard({
   )
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div>
       <dt className="text-xs font-semibold uppercase tracking-wide text-muted">{label}</dt>
-      <dd className="font-medium text-ink">{value}</dd>
+      <dd className={`text-ink ${mono ? 'font-mono text-[13px] font-bold' : 'font-medium'}`}>
+        {value}
+      </dd>
     </div>
   )
 }
