@@ -37,31 +37,36 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
   }
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-sm transition hover:shadow-md">
+    <article className="group flex flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:border-line-strong hover:shadow-lift">
       <div className="relative aspect-square overflow-hidden bg-surface-2">
         {item.photo ? (
           <img
             src={item.photo}
             alt={item.name}
             loading="lazy"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
           />
         ) : (
-          <div className="grid h-full place-items-center text-sm text-muted">No photo</div>
+          <div className="grid h-full place-items-center text-sm font-medium text-muted">
+            No photo
+          </div>
         )}
 
-        {/* Overlaid per-size availability chips. */}
+        {/* Scrim for chip legibility over busy photos. */}
         {item.sizes.length > 0 && (
-          <div className="pointer-events-none absolute inset-x-2 bottom-2 flex flex-wrap gap-1">
-            {item.sizes.map((s) => (
-              <SizeBubble key={s.id} sizeLabel={s.sizeLabel} status={s.status} />
-            ))}
-          </div>
+          <>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/45 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex flex-wrap gap-1">
+              {item.sizes.map((s) => (
+                <SizeBubble key={s.id} sizeLabel={s.sizeLabel} status={s.status} />
+              ))}
+            </div>
+          </>
         )}
 
         {/* Hover actions. */}
         <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
-          <label className="cursor-pointer rounded-md bg-ink/85 px-2 py-1 text-[11px] font-semibold uppercase text-white backdrop-blur hover:bg-ink">
+          <label className="cursor-pointer rounded-md bg-ink/90 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-white backdrop-blur transition hover:bg-black">
             Photo
             <input
               type="file"
@@ -72,14 +77,28 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
           </label>
           <button
             onClick={() => onEdit(item)}
-            className="rounded-md bg-ink/85 px-2 py-1 text-[11px] font-semibold uppercase text-white backdrop-blur hover:bg-ink"
+            className="rounded-md bg-ink/90 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-white backdrop-blur transition hover:bg-black"
           >
             Edit
           </button>
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 p-3">
+      <div className="flex flex-1 flex-col gap-1.5 p-3.5">
+        <div className="flex items-center gap-2">
+          <span className="eyebrow text-[0.625rem]">{item.brand || 'Unbranded'}</span>
+          {ref && (
+            <a
+              href={ref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto text-[11px] font-bold uppercase tracking-wide text-ink-soft underline decoration-dotted underline-offset-2 transition hover:text-ink"
+            >
+              reference ↗
+            </a>
+          )}
+        </div>
+
         {editingName ? (
           <input
             value={draftName}
@@ -87,7 +106,7 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
             onChange={(e) => setDraftName(e.target.value)}
             onBlur={commitName}
             onKeyDown={onNameKey}
-            className="w-full rounded border border-line-strong bg-surface px-1.5 py-1 font-display text-lg font-semibold outline-none"
+            className="w-full rounded border border-line-strong bg-surface px-1.5 py-0.5 font-display text-lg font-semibold uppercase outline-none"
           />
         ) : (
           <button
@@ -96,30 +115,14 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
               setEditingName(true)
             }}
             title="Click to rename"
-            className="text-left font-display text-lg font-semibold leading-tight text-ink hover:underline decoration-dotted underline-offset-4"
+            className="text-left font-display text-lg font-semibold uppercase leading-tight text-ink decoration-dotted underline-offset-4 hover:underline"
           >
             {item.name || 'Untitled'}
           </button>
         )}
 
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-semibold uppercase tracking-widest text-muted">
-            {item.brand || '—'}
-          </span>
-          {ref && (
-            <a
-              href={ref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-semibold text-ink underline decoration-dotted underline-offset-2 hover:text-black"
-            >
-              reference ↗
-            </a>
-          )}
-        </div>
-
-        <div className="mt-auto flex items-center justify-between pt-2">
-          <span className="text-xs text-muted">
+        <div className="mt-auto flex items-center justify-between border-t border-line pt-2.5">
+          <span className="text-xs font-medium text-muted">
             {item.sizes.length} size{item.sizes.length === 1 ? '' : 's'}
           </span>
           <button
@@ -128,7 +131,7 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
                 void deleteItem(item.id)
               }
             }}
-            className="text-xs font-semibold uppercase tracking-wide text-muted hover:text-red-600"
+            className="text-[11px] font-bold uppercase tracking-wide text-muted transition hover:text-red-600"
           >
             Delete
           </button>

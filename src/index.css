@@ -1,24 +1,29 @@
 @import 'tailwindcss';
 
-/* Design tokens — minimal, bold streetwear look. */
+/* Design tokens — minimal, bold streetwear look. Color is reserved almost
+   entirely for the availability chips; everything else is monochrome. */
 @theme {
-  --color-bg: #f2f2ef;
+  --color-bg: #eeeeea;
   --color-surface: #ffffff;
-  --color-surface-2: #fafaf8;
-  --color-ink: #141414;
-  --color-ink-soft: #4a4a4a;
-  --color-line: #e4e4df;
-  --color-line-strong: #141414;
+  --color-surface-2: #f7f7f4;
+  --color-ink: #121212;
+  --color-ink-soft: #52514d;
+  --color-line: #e2e2dc;
+  --color-line-strong: #121212;
 
   --color-avail: #1f8a4c;
   --color-avail-bg: #e6f4ec;
-  --color-pending: #b5730a;
-  --color-pending-bg: #fbf1dd;
+  --color-pending: #a8680a;
+  --color-pending-bg: #f9efda;
   --color-muted: #6b6b6b;
-  --color-muted-bg: #ececea;
+  --color-muted-bg: #e9e9e6;
 
-  --font-display: 'Oswald', 'Arial Narrow', sans-serif;
   --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-poster: 'Anton', 'Oswald', sans-serif;
+
+  --shadow-card: 0 1px 2px rgba(18, 18, 18, 0.04), 0 1px 3px rgba(18, 18, 18, 0.06);
+  --shadow-lift: 0 12px 30px -12px rgba(18, 18, 18, 0.28);
 }
 
 html,
@@ -36,13 +41,35 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Condensed heavy display type for headings and the wordmark. */
+/* Condensed heavy display type for component headings and card titles. */
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
-/* Hide number-input spinners for a cleaner spreadsheet feel. */
+/* Anton — the heavy "poster" face for the wordmark, page titles, and big stats.
+   Single-weight, so never apply bold utilities to it (avoids faux-bold). */
+.font-poster {
+  font-family: var(--font-poster);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 0.92;
+}
+
+/* Lining, tabular figures so money columns and stats stay aligned. */
+.tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Small tracked eyebrow labels. */
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-ink-soft);
+}
+
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -55,4 +82,13 @@ input[type='number'] {
 ::selection {
   background: var(--color-ink);
   color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }
