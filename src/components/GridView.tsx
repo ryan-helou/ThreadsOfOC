@@ -8,6 +8,7 @@ import {
 } from '../../shared/helpers.ts'
 import { useStore } from '../store/store.tsx'
 import { money, signedMoney } from '../lib/format.ts'
+import { sku } from '../lib/labels.ts'
 import { Button } from './ui.tsx'
 import { StatsDashboard } from './StatsDashboard.tsx'
 
@@ -152,6 +153,7 @@ function GridRowView({
             <span className="font-display text-base font-semibold uppercase leading-tight">
               {item.name || 'Untitled'}
             </span>
+            <span className="font-mono text-[10px] text-muted">{sku(item)}</span>
             <button
               onClick={onAddSize}
               title="Add a size to this item"
@@ -161,11 +163,11 @@ function GridRowView({
             </button>
           </div>
         ) : (
-          <span className="pl-3 text-xs text-muted">↳ {item.brand || item.name}</span>
+          <span className="pl-3 font-mono text-xs text-muted">↳ {item.brand || item.name}</span>
         )}
       </td>
       <td className="px-2 py-1.5">
-        <EditText value={size.sizeLabel} placeholder="—" className="w-16" onCommit={(v) => onUpdate({ sizeLabel: v })} />
+        <EditText value={size.sizeLabel} placeholder="—" className="font-mono w-16 font-bold uppercase" onCommit={(v) => onUpdate({ sizeLabel: v })} />
       </td>
       <td className="px-2 py-1.5">
         <select
@@ -188,7 +190,7 @@ function GridRowView({
       </td>
       <td className="px-3 py-1.5">
         <span
-          className={`tabular font-semibold ${sold ? (profit >= 0 ? 'text-avail' : 'text-red-600') : 'text-muted/70'}`}
+          className={`font-mono tabular text-[13px] font-bold ${sold ? (profit >= 0 ? 'text-avail' : 'text-red-600') : 'text-muted/70'}`}
           title={sold ? 'Counted in totals' : 'Not counted until marked Sold'}
         >
           {sold ? signedMoney(profit) : money(profit)}
@@ -259,7 +261,7 @@ function EditNumber({ value, onCommit }: { value: number; onCommit: (v: number) 
         if (e.key === 'Enter') e.currentTarget.blur()
         if (e.key === 'Escape') setDraft(String(value))
       }}
-      className="tabular w-20 rounded border border-transparent bg-transparent px-1.5 py-1 text-right outline-none hover:border-line focus:border-ink-soft focus:bg-surface"
+      className="font-mono tabular w-20 rounded border border-transparent bg-transparent px-1.5 py-1 text-right text-[13px] outline-none hover:border-line focus:border-ink-soft focus:bg-surface"
     />
   )
 }
