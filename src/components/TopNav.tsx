@@ -51,7 +51,7 @@ export function TopNav({
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
         <Logo />
 
-        <nav className="order-3 flex w-full gap-1 sm:order-2 sm:w-auto">
+        <nav className="order-3 -mx-4 flex w-screen gap-1 overflow-x-auto px-4 pb-0.5 sm:order-2 sm:mx-0 sm:w-auto sm:overflow-visible sm:px-0">
           {TABS.map((tab) => {
             const on = tab.id === active
             return (
@@ -59,7 +59,7 @@ export function TopNav({
                 key={tab.id}
                 onClick={() => onChange(tab.id)}
                 aria-current={on ? 'page' : undefined}
-                className={`flex-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold uppercase tracking-wide transition sm:flex-none ${
+                className={`shrink-0 whitespace-nowrap rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wide transition sm:text-sm ${
                   on
                     ? 'bg-ink text-white'
                     : 'text-ink-soft hover:bg-line/60 hover:text-ink'

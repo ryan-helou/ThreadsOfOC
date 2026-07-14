@@ -3,7 +3,7 @@ import type { PaidStatus, Sale } from '../../shared/types.ts'
 import { PAID_STATUS } from '../../shared/types.ts'
 import { useStore } from '../store/store.tsx'
 import { formatDateTime, money } from '../lib/format.ts'
-import { Button, Select } from './ui.tsx'
+import { Button, SelectMenu } from './ui.tsx'
 import { SaleFormModal } from './SaleFormModal.tsx'
 
 export function SalesView() {
@@ -73,7 +73,7 @@ function SaleCard({
   const { updateSale, deleteSale } = useStore()
   const paidTone =
     sale.paid === 'Paid'
-      ? 'bg-avail-bg text-avail border-avail/25'
+      ? 'bg-sold-bg text-sold border-sold/25'
       : 'bg-pending-bg text-pending border-pending/25'
 
   return (
@@ -104,17 +104,14 @@ function SaleCard({
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-muted">Paid?</dt>
           <dd>
-            <Select
+            <SelectMenu
               value={sale.paid}
-              onChange={(e) => updateSale(sale.id, { paid: e.target.value as PaidStatus })}
-              className="mt-0.5 py-1 text-xs"
-            >
-              {PAID_STATUS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </Select>
+              onChange={(v) => updateSale(sale.id, { paid: v as PaidStatus })}
+              ariaLabel="Paid?"
+              size="sm"
+              className="mt-0.5"
+              options={PAID_STATUS.map((p) => ({ value: p, label: p }))}
+            />
           </dd>
         </div>
       </dl>
