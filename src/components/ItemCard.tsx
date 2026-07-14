@@ -1,8 +1,9 @@
 import { useState, type KeyboardEvent } from 'react'
 import type { Item } from '../../shared/types.ts'
-import { sanitizeUrl } from '../../shared/helpers.ts'
+import { realizedProfit, sanitizeUrl } from '../../shared/helpers.ts'
 import { useStore } from '../store/store.tsx'
 import { fileToDataUrl } from '../lib/image.ts'
+import { money } from '../lib/format.ts'
 import { priceRange, sku } from '../lib/labels.ts'
 import { SizeBubble } from './Chip.tsx'
 
@@ -36,6 +37,10 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
       notify(err instanceof Error ? err.message : 'Could not load image', 'error')
     }
   }
+
+  const availCount = item.sizes.filter((s) => s.status === 'Available').length
+  const soldCount = item.sizes.filter((s) => s.status === 'Sold').length
+  const realized = item.sizes.reduce((sum, s) => sum + realizedProfit(s), 0)
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:border-line-strong hover:shadow-lift">
@@ -116,22 +121,30 @@ export function ItemCard({ item, onEdit }: { item: Item; onEdit: (item: Item) =>
         )}
 
         <div className="flex items-baseline justify-between gap-2">
-          <span className="font-mono text-sm font-bold text-ink">{priceRange(item)}</span>
-          {ref && (
-            <a
-              href={ref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] font-bold uppercase tracking-wide text-ink-soft underline decoration-dotted underline-offset-2 transition hover:text-ink"
-            >
-              reference ↗
-            </a>
+          <span className="font-mono text-base font-bold text-ink">{priceRange(item)}</span>
+          {realized > 0 ? (
+            <span className="rounded bg-sold-bg px-1.5 py-0.5 font-mono text-xs font-bold text-sold">
+              +{money(realized)}
+            </span>
+          ) : (
+            ref && (
+              <a
+                href={ref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] font-bold uppercase tracking-wide text-ink-soft underline decoration-dotted underline-offset-2 transition hover:text-ink"
+              >
+                reference ↗
+              </a>
+            )
           )}
         </div>
 
         <div className="mt-auto flex items-center justify-between border-t border-line pt-2.5">
-          <span className="font-mono text-xs text-muted">
-            {item.sizes.length} SZ · {item.sizes.filter((s) => s.status === 'Available').length} AVL
+          <span className="font-mono text-xs">
+            <span className="text-avail">{availCount} AVL</span>
+            {soldCount > 0 && <span className="text-sold"> · {soldCount} SOLD</span>}
+            <span className="text-muted"> · {item.sizes.length} SZ</span>
           </span>
           <button
             onClick={() => {

@@ -3,7 +3,7 @@ import type { Fulfillment, PaidStatus } from '../../shared/types.ts'
 import { FULFILLMENT, PAID_STATUS } from '../../shared/types.ts'
 import { validateSaleFinancials } from '../../shared/helpers.ts'
 import { useStore } from '../store/store.tsx'
-import { Button, Field, Modal, Select, TextInput, Textarea } from './ui.tsx'
+import { Button, Field, Modal, SelectMenu, TextInput, Textarea } from './ui.tsx'
 
 interface Sellable {
   itemId: string
@@ -115,14 +115,13 @@ export function SaleFormModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <Field label="Item + size" hint={sellable.length ? undefined : 'No unsold units available.'}>
-          <Select value={sizeId} onChange={(e) => onSelect(e.target.value)}>
-            <option value="">Select a unit…</option>
-            {sellable.map((s) => (
-              <option key={s.sizeId} value={s.sizeId}>
-                {s.label}
-              </option>
-            ))}
-          </Select>
+          <SelectMenu
+            value={sizeId}
+            onChange={onSelect}
+            placeholder="Select a unit…"
+            ariaLabel="Item + size"
+            options={sellable.map((s) => ({ value: s.sizeId, label: s.label }))}
+          />
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
@@ -154,13 +153,12 @@ export function SaleFormModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
           <Field label="Paid?">
-            <Select value={paid} onChange={(e) => setPaid(e.target.value as PaidStatus)}>
-              {PAID_STATUS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </Select>
+            <SelectMenu
+              value={paid}
+              onChange={(v) => setPaid(v as PaidStatus)}
+              ariaLabel="Paid?"
+              options={PAID_STATUS.map((p) => ({ value: p, label: p }))}
+            />
           </Field>
         </div>
 

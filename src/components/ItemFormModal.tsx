@@ -4,7 +4,7 @@ import { AVAILABILITY } from '../../shared/types.ts'
 import { sanitizeUrl } from '../../shared/helpers.ts'
 import { useStore } from '../store/store.tsx'
 import { fileToDataUrl } from '../lib/image.ts'
-import { Button, Field, Modal, Select, TextInput } from './ui.tsx'
+import { Button, Field, Modal, SelectMenu, TextInput } from './ui.tsx'
 
 /** Create a new item, or edit an existing one's core details. */
 export function ItemFormModal({
@@ -153,13 +153,12 @@ export function ItemFormModal({
                 <TextInput value={sizeLabel} onChange={(e) => setSizeLabel(e.target.value)} />
               </Field>
               <Field label="Status">
-                <Select value={status} onChange={(e) => setStatus(e.target.value as Availability)}>
-                  {AVAILABILITY.map((a) => (
-                    <option key={a} value={a}>
-                      {a}
-                    </option>
-                  ))}
-                </Select>
+                <SelectMenu
+                  value={status}
+                  onChange={(v) => setStatus(v as Availability)}
+                  options={AVAILABILITY.map((a) => ({ value: a, label: a }))}
+                  ariaLabel="Status"
+                />
               </Field>
               <Field label="Cost">
                 <TextInput
