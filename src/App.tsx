@@ -5,6 +5,7 @@ import { TopNav, type Tab } from './components/TopNav.tsx'
 import { GalleryView } from './components/GalleryView.tsx'
 import { GridView } from './components/GridView.tsx'
 import { SalesView } from './components/SalesView.tsx'
+import { FinancesView } from './components/FinancesView.tsx'
 import { Toasts } from './components/Toasts.tsx'
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
         {tab === 'gallery' && <GalleryView />}
         {tab === 'grid' && <GridView />}
         {tab === 'sales' && <SalesView />}
+        {tab === 'finances' && <FinancesView />}
       </main>
       <Toasts />
     </div>

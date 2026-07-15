@@ -80,6 +80,7 @@ function parseSize(body: Record<string, unknown>): SizeEntry {
     status: oneOf(body.status ?? 'Available', AVAILABILITY, 'Status'),
     cost: money(body.cost ?? 0, 'Cost'),
     salePrice: money(body.salePrice ?? 0, 'Sale price'),
+    soldTo: str(body.soldTo ?? '', 'Sold to', { max: 200 }),
     note: str(body.note ?? '', 'Note'),
   }
 }
@@ -152,6 +153,7 @@ api.patch('/sizes/:id', (req, res) => {
     ...(b.status !== undefined && { status: oneOf(b.status, AVAILABILITY, 'Status') }),
     ...(b.cost !== undefined && { cost: money(b.cost, 'Cost') }),
     ...(b.salePrice !== undefined && { salePrice: money(b.salePrice, 'Sale price') }),
+    ...(b.soldTo !== undefined && { soldTo: str(b.soldTo, 'Sold to', { max: 200 }) }),
     ...(b.note !== undefined && { note: str(b.note, 'Note') }),
   })
   ok(res)
@@ -223,6 +225,7 @@ api.put('/state', (req, res) => {
         status: oneOf(s.status ?? 'Available', AVAILABILITY, 'Status'),
         cost: money(s.cost ?? 0, 'Cost'),
         salePrice: money(s.salePrice ?? 0, 'Sale price'),
+        soldTo: str(s.soldTo ?? '', 'Sold to', { max: 200 }),
         note: str(s.note ?? '', 'Note'),
       })),
     })),

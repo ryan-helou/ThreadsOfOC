@@ -66,7 +66,7 @@ export function GridView() {
   const emptyMsg = q ? 'No rows match your search.' : 'No rows yet — add one above.'
 
   const addSizeTo = (itemId: string) =>
-    addSize(itemId, { sizeLabel: '', status: 'Available', cost: 0, salePrice: 0, note: '' })
+    addSize(itemId, { sizeLabel: '', status: 'Available', cost: 0, salePrice: 0, soldTo: '', note: '' })
 
   return (
     <section className="space-y-6">
@@ -96,7 +96,7 @@ export function GridView() {
               name: 'New item',
               brand: '',
               photo: '',
-              sizes: [{ sizeLabel: '', status: 'Available', cost: 0, salePrice: 0, note: '' }],
+              sizes: [{ sizeLabel: '', status: 'Available', cost: 0, salePrice: 0, soldTo: '', note: '' }],
             })
           }
         >
@@ -115,6 +115,7 @@ export function GridView() {
               <Th className="w-[90px]">Cost</Th>
               <Th className="w-[90px]">Sale $</Th>
               <Th className="w-[100px]">Profit</Th>
+              <Th className="w-[140px]">Sold to</Th>
               <Th>Notes</Th>
               <Th className="w-[60px] text-right">·</Th>
             </tr>
@@ -122,7 +123,7 @@ export function GridView() {
           <tbody>
             {empty && (
               <tr>
-                <td colSpan={8} className="px-4 py-10 text-center text-muted">
+                <td colSpan={9} className="px-4 py-10 text-center text-muted">
                   {emptyMsg}
                 </td>
               </tr>
@@ -247,6 +248,14 @@ function GridRowView({
         </span>
       </td>
       <td className="px-2 py-1.5">
+        <EditText
+          value={size.soldTo}
+          placeholder="—"
+          className={`w-full ${sold ? 'text-ink' : 'text-muted'}`}
+          onCommit={(v) => onUpdate({ soldTo: v })}
+        />
+      </td>
+      <td className="px-2 py-1.5">
         <EditText value={size.note} placeholder="Add note…" className="w-full" onCommit={(v) => onUpdate({ note: v })} />
       </td>
       <td className="px-3 py-1.5 text-right">
@@ -360,13 +369,32 @@ function MobileSizeRow({
         </div>
       </div>
 
-      <div className="mt-2 rounded border border-line px-1">
-        <EditText
-          value={size.note}
-          placeholder="Add note…"
-          className="w-full"
-          onCommit={(v) => onUpdate({ note: v })}
-        />
+      <div className="mt-2.5">
+        <span className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-muted">
+          Sold to
+        </span>
+        <div className="rounded border border-line px-1">
+          <EditText
+            value={size.soldTo}
+            placeholder="Buyer name"
+            className="w-full"
+            onCommit={(v) => onUpdate({ soldTo: v })}
+          />
+        </div>
+      </div>
+
+      <div className="mt-2">
+        <span className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-muted">
+          Notes
+        </span>
+        <div className="rounded border border-line px-1">
+          <EditText
+            value={size.note}
+            placeholder="Add note…"
+            className="w-full"
+            onCommit={(v) => onUpdate({ note: v })}
+          />
+        </div>
       </div>
     </div>
   )
