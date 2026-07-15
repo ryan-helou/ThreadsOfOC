@@ -44,6 +44,7 @@ db.exec(`
     status     TEXT NOT NULL DEFAULT 'Available',
     cost       REAL NOT NULL DEFAULT 0,
     sale_price REAL NOT NULL DEFAULT 0,
+    sold_to    TEXT NOT NULL DEFAULT '',
     note       TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL
   );
@@ -65,6 +66,24 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_sales_size ON sales(size_id);
 `)
 
+/**
+ * Migration: add the sold_to column to pre-existing databases and, ONE TIME
+ * (only when the column is first created), move each row's note into sold_to —
+ * the reseller had been writing buyer names in the notes field. Because this
+ * only runs when the column is absent, it never re-clears notes on later boots.
+ */
+{
+  const cols = db.prepare('PRAGMA table_info(sizes)').all() as { name: string }[]
+  if (!cols.some((c) => c.name === 'sold_to')) {
+    db.exec(`ALTER TABLE sizes ADD COLUMN sold_to TEXT NOT NULL DEFAULT ''`)
+    const moved = db
+      .prepare(`UPDATE sizes SET sold_to = note, note = '' WHERE trim(note) != ''`)
+      .run()
+    // eslint-disable-next-line no-console
+    console.log(`[migrate] added sizes.sold_to; moved ${moved.changes} note(s) into it.`)
+  }
+}
+
 /* --------------------------------------------------------------- reads --- */
 
 interface ItemRow {
@@ -81,6 +100,7 @@ interface SizeRow {
   status: string
   cost: number
   sale_price: number
+  sold_to: string
   note: string
 }
 interface SaleRow {
@@ -102,6 +122,7 @@ function rowToSize(r: SizeRow): SizeEntry {
     status: r.status as Availability,
     cost: numberOr0(r.cost),
     salePrice: numberOr0(r.sale_price),
+    soldTo: r.sold_to ?? '',
     note: r.note,
   }
 }
@@ -171,8 +192,8 @@ export function insertItem(item: Item): void {
     created_at: now(),
   })
   const insertSize = db.prepare(
-    `INSERT INTO sizes (id, item_id, size_label, status, cost, sale_price, note, created_at)
-     VALUES (@id, @item_id, @size_label, @status, @cost, @sale_price, @note, @created_at)`,
+    `INSERT INTO sizes (id, item_id, size_label, status, cost, sale_price, sold_to, note, created_at)
+     VALUES (@id, @item_id, @size_label, @status, @cost, @sale_price, @sold_to, @note, @created_at)`,
   )
   for (const s of item.sizes) {
     insertSize.run({
@@ -182,6 +203,7 @@ export function insertItem(item: Item): void {
       status: s.status,
       cost: numberOr0(s.cost),
       sale_price: numberOr0(s.salePrice),
+      sold_to: s.soldTo ?? '',
       note: s.note,
       created_at: now(),
     })
@@ -220,8 +242,8 @@ export function insertSize(itemId: string, size: SizeEntry): void {
   const item = db.prepare('SELECT id FROM items WHERE id = ?').get(itemId)
   if (!item) throw new HttpError(404, 'Item not found')
   db.prepare(
-    `INSERT INTO sizes (id, item_id, size_label, status, cost, sale_price, note, created_at)
-     VALUES (@id, @item_id, @size_label, @status, @cost, @sale_price, @note, @created_at)`,
+    `INSERT INTO sizes (id, item_id, size_label, status, cost, sale_price, sold_to, note, created_at)
+     VALUES (@id, @item_id, @size_label, @status, @cost, @sale_price, @sold_to, @note, @created_at)`,
   ).run({
     id: size.id,
     item_id: itemId,
@@ -229,6 +251,7 @@ export function insertSize(itemId: string, size: SizeEntry): void {
     status: size.status,
     cost: numberOr0(size.cost),
     sale_price: numberOr0(size.salePrice),
+    sold_to: size.soldTo ?? '',
     note: size.note,
     created_at: now(),
   })
@@ -241,7 +264,7 @@ export function updateSize(id: string, patch: Partial<SizeEntry>): void {
   if (!current) throw new HttpError(404, 'Size not found')
   db.prepare(
     `UPDATE sizes SET size_label = @size_label, status = @status, cost = @cost,
-       sale_price = @sale_price, note = @note WHERE id = @id`,
+       sale_price = @sale_price, sold_to = @sold_to, note = @note WHERE id = @id`,
   ).run({
     id,
     size_label: patch.sizeLabel ?? current.size_label,
@@ -251,6 +274,7 @@ export function updateSize(id: string, patch: Partial<SizeEntry>): void {
       patch.salePrice !== undefined
         ? numberOr0(patch.salePrice)
         : current.sale_price,
+    sold_to: patch.soldTo !== undefined ? patch.soldTo : current.sold_to,
     note: patch.note ?? current.note,
   })
 }
@@ -289,8 +313,13 @@ export const insertSale = db.transaction((sale: Sale) => {
     notes: sale.notes,
     created_at: now(),
   })
-  // Inventory stays in sync: this specific unit is now Sold.
-  db.prepare('UPDATE sizes SET status = ? WHERE id = ?').run('Sold', sale.sizeId)
+  // Inventory stays in sync: this specific unit is now Sold, and the buyer name
+  // flows onto the unit's "sold to" field (unless one is already recorded).
+  db.prepare(
+    `UPDATE sizes SET status = 'Sold',
+       sold_to = CASE WHEN trim(sold_to) = '' THEN @buyer ELSE sold_to END
+     WHERE id = @id`,
+  ).run({ id: sale.sizeId, buyer: sale.buyerName })
 })
 
 export function updateSale(id: string, patch: Partial<Sale>): void {

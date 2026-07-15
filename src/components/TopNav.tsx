@@ -3,12 +3,13 @@ import { useStore } from '../store/store.tsx'
 import { Logo } from './Logo.tsx'
 import { Button } from './ui.tsx'
 
-export type Tab = 'gallery' | 'grid' | 'sales'
+export type Tab = 'gallery' | 'grid' | 'sales' | 'finances'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'gallery', label: 'My Clothes' },
   { id: 'grid', label: 'Item Grid' },
   { id: 'sales', label: 'Sales & Delivery' },
+  { id: 'finances', label: 'Finances' },
 ]
 
 export function TopNav({

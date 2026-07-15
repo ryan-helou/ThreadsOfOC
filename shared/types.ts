@@ -26,6 +26,8 @@ export interface SizeEntry {
   status: Availability
   cost: number
   salePrice: number
+  /** Who bought this unit (buyer name). Empty until sold. */
+  soldTo: string
   note: string
 }
 

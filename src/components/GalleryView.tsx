@@ -33,7 +33,7 @@ export function GalleryView() {
             name: name || 'New item',
             brand: '',
             photo,
-            sizes: [{ sizeLabel: 'M', status: 'Available', cost: 0, salePrice: 0, note: '' }],
+            sizes: [{ sizeLabel: 'M', status: 'Available', cost: 0, salePrice: 0, soldTo: '', note: '' }],
           })
           if (ok) added++
         } catch {

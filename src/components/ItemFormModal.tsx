@@ -68,6 +68,7 @@ export function ItemFormModal({
             status,
             cost: Number(cost) || 0,
             salePrice: Number(salePrice) || 0,
+            soldTo: '',
             note: '',
           },
         ],
