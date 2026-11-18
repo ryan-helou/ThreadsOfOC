@@ -1,6 +1,12 @@
+<div align="center">
+
 # Threads of OC
 
-A private web app for keeping track of a small streetwear resale business: what's in stock, what sold, and how much profit it made.
+**A private web app for keeping track of a small streetwear resale business: what's in stock, what sold, and how much profit it made.**
+
+</div>
+
+<br>
 
 Someone who buys and resells clothing (brands like BAPE, Hellstar and Denim Tears) needs to know which pieces and sizes are still available, who bought what, and whether the business is making money. This app keeps all of that in one place. It has a single owner login, and nobody else can make changes.
 
