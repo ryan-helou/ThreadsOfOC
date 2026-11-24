@@ -4,6 +4,8 @@
 
 **A private web app for keeping track of a small streetwear resale business: what's in stock, what sold, and how much profit it made.**
 
+<!-- facts --><img alt="Built for: streetwear resale" src="https://img.shields.io/badge/Built_for-streetwear_resale-24292f?style=for-the-badge"> <img alt="Tracks: stock size by size" src="https://img.shields.io/badge/Tracks-stock_size_by_size-24292f?style=for-the-badge"> <img alt="Logins: owner only" src="https://img.shields.io/badge/Logins-owner_only-24292f?style=for-the-badge">
+
 </div>
 
 <br>
